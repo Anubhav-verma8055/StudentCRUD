@@ -15,6 +15,10 @@ public class Attendance {
     private Long studentId;
     private  Long teacherId;
     private boolean isStudentPresent;
+    private String subject;
+    private LocalDate date;
+    private String studentname;
+    private String teachername;
 
     public String getStudentname() {
         return studentname;
@@ -32,10 +36,7 @@ public class Attendance {
         this.teachername = teachername;
     }
 
-    private String subject;
-    private LocalDate date;
-    private String studentname;
-    private String teachername;
+
 
     public Long getStudentId() {
         return studentId;
