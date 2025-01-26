@@ -12,7 +12,6 @@ import com.example.school.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,11 +31,18 @@ public class ResultService {
 
     public StudentResultResponse generateStudentResult(Long studentId) {
 
-     //   Fees fees = feesRepository.findByStudentId(studentId)
-            //    .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+
 
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+
+       // Fees fees = feesRepository.findByStudentId(studentId).get(0);
+              // .orElseYhrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+     List<Fees> feesList = feesRepository.findByStudentId(studentId);
+        if (feesList.isEmpty()) {
+            throw new RuntimeException("Marks not found for student ID: " + studentId);
+        }
+        Fees fees =feesList.get(0);
 
 
         Marks marks = marksRepository.findByStudentId(studentId).get(0);
@@ -71,7 +77,7 @@ public class ResultService {
         response.setTotalMaxMarks(totalMaxMarks);
         response.setPercentage(percentage);
         response.setGrade(grade);
-     //   response.setMonth(fees.getMonth());
+       response.setMonth(fees.getMonth());
 
         return response;
     }

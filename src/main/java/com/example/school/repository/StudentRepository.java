@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface StudentRepository extends JpaRepository<Student,Long> {
-    List<Student> findByTeacherId(Long teacherId); // Fetch students for a specific teacher
+    List<Student> findByTeacherId(Long teacherId);
+   // List<Student>  findByStudentId(Long studentId);// Fetch students for a specific teacher
 }
