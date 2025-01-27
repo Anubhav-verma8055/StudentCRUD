@@ -26,8 +26,8 @@ public class AttendanceController {
      }
 
     // Get attendance records for a student
-     @PostMapping("/student/markattendance")
-     public List<Attendance> getAttendanceByStudent(@RequestBody Long studentId) {
+     @PostMapping("/student/{studentId}")
+     public List<Attendance> getAttendanceByStudent(@PathVariable Long studentId) {
         List<Attendance> attendanceList = attendanceRepository.getAttendanceByStudentId(studentId);
         return attendanceList;
      }
@@ -40,8 +40,8 @@ public class AttendanceController {
     }
 
     //Mark attendance for a student
-    @GetMapping("/student/{studentId}/{subject}")
-    public Attendance markAttendance(@PathVariable  Long studentId, @PathVariable String subject) {
+    @PostMapping("/student/mark attendance")
+    public Attendance markAttendance(@RequestBody  Long studentId, @RequestBody String subject) {
         return attendanceService.markAttendance(studentId,subject);
     }
 
