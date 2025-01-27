@@ -26,8 +26,8 @@ public class AttendanceController {
      }
 
     // Get attendance records for a student
-     @GetMapping("/student/{studentId}")
-     public List<Attendance> getAttendanceByStudent(@PathVariable Long studentId) {
+     @PostMapping("/student/markattendance")
+     public List<Attendance> getAttendanceByStudent(@RequestBody Long studentId) {
         List<Attendance> attendanceList = attendanceRepository.getAttendanceByStudentId(studentId);
         return attendanceList;
      }

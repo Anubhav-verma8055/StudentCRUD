@@ -21,7 +21,9 @@ public class AttendanceService {
 
     @Autowired
     private TeacherRepository teacherRepository;
+
     private final AttendanceRepository attendanceRepository;
+
 
     public AttendanceService(AttendanceRepository attendanceRepository) {
         this.attendanceRepository = attendanceRepository;
@@ -58,10 +60,15 @@ public class AttendanceService {
             throw new RuntimeException("Attendance record not found for ID: " + attendanceId);
         }
 
-       if(student.getTeacherId().equals(teacherId)) {
+       if(student.getTeacherId().equals(teacherId) && !attendanceRepository.existsById(attendanceId) && studentRepository.existsById(studentId)) {
            Attendance attendance = update.get();
            attendance.setStudentId(studentId);
-           attendance.setStudentPresent(true);
+           if(attendance.isStudentPresent() == false) {
+               attendance.setStudentPresent(true);
+           }
+           else {
+               attendance.setStudentPresent(true);
+           }
            return attendanceRepository.save(attendance);
        }
        else {

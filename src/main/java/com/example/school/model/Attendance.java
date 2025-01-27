@@ -14,6 +14,7 @@ public class Attendance {
     private Long id;
     private Long studentId;
     private  Long teacherId;
+
     private boolean isStudentPresent;
     private String subject;
     private LocalDate date;
