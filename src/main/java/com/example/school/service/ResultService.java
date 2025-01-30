@@ -33,17 +33,16 @@ public class ResultService {
     public StudentResultResponse generateStudentResult(Long studentId) {
 
 
-
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
 
-       // Fees fees = feesRepository.findByStudentId(studentId).get(0);
-              // .orElseYhrow(() -> new RuntimeException("Student not found with ID: " + studentId));
-     List<Fees> feesList = feesRepository.findByStudentId(studentId);
+        // Fees fees = feesRepository.findByStudentId(studentId).get(0);
+        // .orElseYhrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+        List<Fees> feesList = feesRepository.findByStudentId(studentId);
         if (feesList.isEmpty()) {
             throw new RuntimeException("Marks not found for student ID: " + studentId);
         }
-        Fees fees =feesList.get(0);
+        Fees fees = feesList.get(0);
 
 
         Marks marks = marksRepository.findByStudentId(studentId).get(0);
@@ -78,7 +77,7 @@ public class ResultService {
         response.setTotalMaxMarks(totalMaxMarks);
         response.setPercentage(percentage);
         response.setGrade(grade);
-       response.setMonth(fees.getMonth());
+        response.setMonth(fees.getMonth());
 
         return response;
     }
@@ -91,7 +90,7 @@ public class ResultService {
         return "F";
     }
 
-    public Map<String,Object> getRequirementsBasedMarks(Long studentId, List<String> subjects) {
+    public Map<String, Object> getRequirementsBasedMarks(Long studentId, List<String> subjects) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
 
@@ -106,26 +105,25 @@ public class ResultService {
         Marks marks = marksOpt.get();
 
         //construct response dynamically
-        Map<String,Object> response = new HashMap<>();
-        response.put("studentId",student.getId());
-        response.put("studentName",student.getName());
+        Map<String, Object> response = new HashMap<>();
+        response.put("studentId", student.getId());
+        response.put("studentName", student.getName());
         response.put("teacherName", teacher != null ? teacher.getName() : "Unknown");
 
-        Map<String,Integer> marksMap = new HashMap<>();
-        if(subjects == null || subjects.isEmpty()) {
+        Map<String, Integer> marksMap = new HashMap<>();
+        if (subjects == null || subjects.isEmpty()) {
             marksMap.put("hindi", marks.getHindi());
             marksMap.put("english", marks.getEnglish());
             marksMap.put("maths", marks.getMaths());
             marksMap.put("science", marks.getScience());
             marksMap.put("politics", marks.getPolitics());
             marksMap.put("physicalEducation", marks.getPhysicalEducation());
-        }
-        else{
-            for(String subject : subjects) {
-                switch(subject.toLowerCase()) {
-                    case "hindi" :
-                    marksMap.put("hindi",marks.getHindi());
-                    break;
+        } else {
+            for (String subject : subjects) {
+                switch (subject.toLowerCase()) {
+                    case "hindi":
+                        marksMap.put("hindi", marks.getHindi());
+                        break;
 
                     case "english":
                         marksMap.put("english", marks.getEnglish());
@@ -152,9 +150,9 @@ public class ResultService {
 
         response.put("marks", marksMap);
         return response;
-        }
+    }
 
-    public List<Map<String,Object>> getRequestedMarks(Long studentId, List<String> subjects) {
+    public List<Map<String, Object>> getRequestedMarks(Long studentId, List<String> subjects) {
 
         List<Map<String, Object>> resultList = new ArrayList<>();
         Student student = studentRepository.findById(studentId)
@@ -171,13 +169,13 @@ public class ResultService {
         Marks marks = marksOpt.get();
 
         //construct response dynamically
-        Map<String,Object> response = new HashMap<>();
-        response.put("studentId",student.getName());
-        response.put("studentName",student.getName());
+        Map<String, Object> response = new HashMap<>();
+        response.put("studentId", student.getName());
+        response.put("studentName", student.getName());
         response.put("teacherName", teacher != null ? teacher.getName() : "Unknown");
 
-        Map<String,Integer> marksMap = new HashMap<>();
-        if(subjects == null || subjects.isEmpty()) {
+        Map<String, Integer> marksMap = new HashMap<>();
+        if (subjects == null || subjects.isEmpty()) {
             for (Field field : Marks.class.getDeclaredFields()) {
                 if (field.getType().equals(int.class)) { //assume only for int fields in marks
                     try {
@@ -199,12 +197,15 @@ public class ResultService {
                     }
                 }
 
-                response.put("marks", marksMap);
-                resultList.add(response);
-                return resultList;
 
             }
         }
+        response.put("marks", marksMap);
+        resultList.add(response);
+        return resultList;
+    }
+}
+
 
 
 
@@ -229,6 +230,7 @@ public class ResultService {
 //                    return generateStudentResult(fee.getStudentId());
 //
 //                }).toList();
-    }
-}
+
+
+
 
