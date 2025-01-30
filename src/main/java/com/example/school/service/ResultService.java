@@ -12,7 +12,8 @@ import com.example.school.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.*;
 
 @Service
 public class ResultService {
@@ -90,6 +91,124 @@ public class ResultService {
         return "F";
     }
 
+    public Map<String,Object> getRequirementsBasedMarks(Long studentId, List<String> subjects) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+
+        Teacher teacher = teacherRepository.findById(student.getTeacherId())
+                .orElseThrow(() -> new RuntimeException("Teacher not found for ID: " + student.getTeacherId()));
+
+
+        Optional<Marks> marksOpt = marksRepository.findByStudentId(studentId).stream().findFirst();
+        if (marksOpt.isEmpty()) {
+            throw new RuntimeException("Marks not found for student ID: " + studentId);
+        }
+        Marks marks = marksOpt.get();
+
+        //construct response dynamically
+        Map<String,Object> response = new HashMap<>();
+        response.put("studentId",student.getId());
+        response.put("studentName",student.getName());
+        response.put("teacherName", teacher != null ? teacher.getName() : "Unknown");
+
+        Map<String,Integer> marksMap = new HashMap<>();
+        if(subjects == null || subjects.isEmpty()) {
+            marksMap.put("hindi", marks.getHindi());
+            marksMap.put("english", marks.getEnglish());
+            marksMap.put("maths", marks.getMaths());
+            marksMap.put("science", marks.getScience());
+            marksMap.put("politics", marks.getPolitics());
+            marksMap.put("physicalEducation", marks.getPhysicalEducation());
+        }
+        else{
+            for(String subject : subjects) {
+                switch(subject.toLowerCase()) {
+                    case "hindi" :
+                    marksMap.put("hindi",marks.getHindi());
+                    break;
+
+                    case "english":
+                        marksMap.put("english", marks.getEnglish());
+                        break;
+
+                    case "maths":
+                        marksMap.put("maths", marks.getMaths());
+                        break;
+                    case "science":
+                        marksMap.put("science", marks.getScience());
+                        break;
+                    case "politics":
+                        marksMap.put("politics", marks.getPolitics());
+                        break;
+                    case "physicaleducation":
+                        marksMap.put("physicalEducation", marks.getPhysicalEducation());
+                        break;
+                    default:
+                        throw new RuntimeException("Invalid subject: " + subject);
+                }
+            }
+
+        }
+
+        response.put("marks", marksMap);
+        return response;
+        }
+
+    public List<Map<String,Object>> getRequestedMarks(Long studentId, List<String> subjects) {
+
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+
+        Teacher teacher = teacherRepository.findById(student.getTeacherId())
+                .orElseThrow(() -> new RuntimeException("Teacher not found for ID: " + student.getTeacherId()));
+
+
+        Optional<Marks> marksOpt = marksRepository.findByStudentId(studentId).stream().findFirst();
+        if (marksOpt.isEmpty()) {
+            throw new RuntimeException("Marks not found for student ID: " + studentId);
+        }
+        Marks marks = marksOpt.get();
+
+        //construct response dynamically
+        Map<String,Object> response = new HashMap<>();
+        response.put("studentId",student.getName());
+        response.put("studentName",student.getName());
+        response.put("teacherName", teacher != null ? teacher.getName() : "Unknown");
+
+        Map<String,Integer> marksMap = new HashMap<>();
+        if(subjects == null || subjects.isEmpty()) {
+            for (Field field : Marks.class.getDeclaredFields()) {
+                if (field.getType().equals(int.class)) { //assume only for int fields in marks
+                    try {
+                        field.setAccessible(true);
+                        marksMap.put(field.getName(), field.getInt(marks));
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("Error accessing field: " + field.getName(), e);
+                    }
+                } else {
+                    // Fetch only requested subjects dynamically
+                    for (String subject : subjects) {
+                        try {
+                            Field fields = Marks.class.getDeclaredField(subject.toLowerCase());
+                            fields.setAccessible(true);
+                            marksMap.put(subject.toLowerCase(), fields.getInt(marks));
+                        } catch (NoSuchFieldException | IllegalAccessException e) {
+                            throw new RuntimeException("Invalid subject: " + subject);
+                        }
+                    }
+                }
+
+                response.put("marks", marksMap);
+                resultList.add(response);
+                return resultList;
+
+            }
+        }
+
+
+
+
 //    public List<StudentResultResponse> generatePaidStudentResult(String month) {
 //        List<Fees> allFees = feesRepository.findAll();
 //
@@ -110,6 +229,6 @@ public class ResultService {
 //                    return generateStudentResult(fee.getStudentId());
 //
 //                }).toList();
-
     }
+}
 
