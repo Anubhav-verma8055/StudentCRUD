@@ -8,26 +8,31 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PaidResult {
-   @Autowired
+    @Autowired
     private FeesRepository feesRepository;
 
-   @Autowired
+    @Autowired
     private ResultService resultService;
 
 
-   public List<StudentResultResponse> generatePaidStudentResult(String month) {
-       List<Fees> allstudentList = feesRepository.findAll();
-       List<StudentResultResponse> marksheet = new ArrayList<>();
-       for(Fees paidFeeStudents : allstudentList) {
-           if(paidFeeStudents.getMonth().equals(month) && paidFeeStudents.isSubmitted())
-           {
-               marksheet.add(resultService.generateStudentResult(paidFeeStudents.getStudentId()));
-           }
-       }
-       return marksheet;
-   }
+    public List<StudentResultResponse> generatePaidStudentResult(String month) {
+        List<Fees> allstudentList = feesRepository.findAll();
+        List<StudentResultResponse> marksheet = new ArrayList<>();
+        for (Fees paidFeeStudents : allstudentList) {
+            if (paidFeeStudents.getMonth().equals(month) && paidFeeStudents.isSubmitted()) {
+                marksheet.add(resultService.generateStudentResult(paidFeeStudents.getStudentId()));
+            }
+        }
+        return marksheet;
+    }
+
+    public List<Map<String,Object>> getRequestedFeesDetails(List<Long> studentIds, List<String> months) {
+
+    }
+
 
 }

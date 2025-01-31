@@ -2,16 +2,21 @@ package com.example.school.controller;
 
 import com.example.school.model.Fees;
 import com.example.school.repository.FeesRepository;
+import com.example.school.service.PaidResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/fees")
 public class FeesController {
     @Autowired
     private FeesRepository feesRepository;
+
+    @Autowired
+    private PaidResult paidResult;
 
     @GetMapping("/showall")
     public List<Fees> getFeesByStudentId() {
@@ -40,5 +45,10 @@ public class FeesController {
             throw new RuntimeException("Fees not found with ID: " + id);
         }
         feesRepository.deleteById(id);
+    }
+
+    @PostMapping("/student/monthFeesDetails")
+    public List<Map<String,Object>> getRequestedFeesDetails(@RequestBody List<Long> studentIds, @RequestBody List<String> months ) {
+        return paidResult.getRequestedFeesDetails(studentIds,months);
     }
 }
