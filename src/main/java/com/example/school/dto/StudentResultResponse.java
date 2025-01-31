@@ -1,5 +1,7 @@
 package com.example.school.dto;
 
+import java.util.Map;
+
 public class StudentResultResponse {
     private Long studentId;
     private String studentName;
@@ -12,11 +14,20 @@ public class StudentResultResponse {
     private Integer science;
     private Integer politics;
     private Integer physicalEducation;
+    private Map<String,Integer> subjectsMarks;
     private Integer totalMarks;
     private Integer totalMaxMarks;
     private Double percentage;
     private String grade;
     private String month;
+
+    public Map<String, Integer> getSubjectsMarks() {
+        return subjectsMarks;
+    }
+
+    public void setSubjectsMarks(Map<String, Integer> subjectsMarks) {
+        this.subjectsMarks = subjectsMarks;
+    }
 
     public String getStudentClass() {
         return studentClass;

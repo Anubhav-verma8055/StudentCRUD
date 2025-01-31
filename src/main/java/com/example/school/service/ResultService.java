@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ResultService {
@@ -177,34 +178,89 @@ public class ResultService {
         Map<String, Integer> marksMap = new HashMap<>();
         if (subjects == null || subjects.isEmpty()) {
             for (Field field : Marks.class.getDeclaredFields()) {
-                if (field.getType().equals(int.class)) { //assume only for int fields in marks
+                if (field.getType().equals(int.class)) { // Handle int fields only
                     try {
                         field.setAccessible(true);
                         marksMap.put(field.getName(), field.getInt(marks));
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException("Error accessing field: " + field.getName(), e);
                     }
-                } else {
-                    // Fetch only requested subjects dynamically
-                    for (String subject : subjects) {
-                        try {
-                            Field fields = Marks.class.getDeclaredField(subject.toLowerCase());
-                            fields.setAccessible(true);
-                            marksMap.put(subject.toLowerCase(), fields.getInt(marks));
-                        } catch (NoSuchFieldException | IllegalAccessException e) {
-                            throw new RuntimeException("Invalid subject: " + subject);
-                        }
-                    }
                 }
-
-
+            }
+        } else {
+            // Only return marks for requested subjects
+            for (String subject : subjects) {
+                try {
+                    Field field = Marks.class.getDeclaredField(subject.toLowerCase());
+                    field.setAccessible(true);
+                    marksMap.put(subject.toLowerCase(), field.getInt(marks));
+                } catch (NoSuchFieldException e) {
+                    throw new RuntimeException("Invalid subject: " + subject);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Error accessing field: " + subject, e);
+                }
             }
         }
+
+        // Add marks to the response
         response.put("marks", marksMap);
         resultList.add(response);
+
         return resultList;
     }
+
+
+    public StudentResultResponse getFilteredStudentMarks(Long studentId, List<String> excludeSubjects) {
+        // Retrieve the student entity from the repository
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+
+        // Retrieve the marks for the student
+        Marks marks = marksRepository.findByStudentId(studentId).stream().findFirst()
+                .orElseThrow(() -> new RuntimeException("Marks not found for student ID: " + studentId));
+
+        // Retrieve the teacher entity
+        Teacher teacher = teacherRepository.findById(student.getTeacherId()).orElse(null);
+
+        // Get all declared fields in the Marks class (subjects)
+        Field[] fields = Marks.class.getDeclaredFields();
+
+        // Determine the subjects to include (exclude those in the excludeSubjects list)
+        Set<String> requestedSubjects = (excludeSubjects == null || excludeSubjects.isEmpty()) ?
+                Arrays.stream(fields).map(Field::getName)
+                        .collect(Collectors.toSet()) :
+                Arrays.stream(fields)
+                        .map(Field::getName)
+                        .filter(subject -> !excludeSubjects.stream().map(String::toLowerCase).collect(Collectors.toSet()).contains(subject.toLowerCase()))
+                        .collect(Collectors.toSet());
+
+        // Extract marks for the requested subjects using Streams
+        Map<String, Integer> subjectsMarks = Arrays.stream(fields)
+                .filter(field -> field.getType().equals(int.class) && requestedSubjects.contains(field.getName()))
+                .collect(Collectors.toMap(Field::getName,
+                        field -> {
+                            try {
+                                field.setAccessible(true);
+                                return field.getInt(marks);
+                            } catch (IllegalAccessException e) {
+                                throw new RuntimeException("Error accessing field: " + field.getName(), e);
+                            }
+                        }));
+
+        // Prepare the response
+        StudentResultResponse response = new StudentResultResponse();
+
+        response.setStudentId(student.getId());
+        response.setStudentName(student.getName());
+        response.setStudentClass(student.getStudentClass());
+        response.setTeacherName(teacher != null ? teacher.getName() : "Unknown");
+        response.setTeacherSpeciality(teacher != null ? teacher.getSpeciality() : "N/A");
+        response.setSubjectsMarks(subjectsMarks); // Only the included subjects
+
+        return response;
+    }
 }
+
 
 
 

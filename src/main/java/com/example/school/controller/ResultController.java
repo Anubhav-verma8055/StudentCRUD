@@ -43,6 +43,12 @@ public class ResultController {
         return resultService.getRequestedMarks(studentId,subjects);
     }
 
+    //utilising the studentStatusResponse dto to get the required marks of excluded subjects passed as list
+    @PostMapping("/student/exclude-subjects")
+    public StudentResultResponse getFilteredStudentMarks(@RequestBody Long studentId,@RequestBody List<String> excludeSubjects) {
+        return resultService.getFilteredStudentMarks(studentId,excludeSubjects);
+    }
+
 }
 
 
