@@ -17,6 +17,16 @@ public class Student {
     private String studentClass;
     private Long teacherId;
 
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    private byte[] image;
+
     public Long getId() {
         return id;
     }

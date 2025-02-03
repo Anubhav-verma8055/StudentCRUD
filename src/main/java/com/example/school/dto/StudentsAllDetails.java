@@ -194,4 +194,14 @@ public class StudentsAllDetails {
 
     private String month;
     private Boolean submitted;
+
+    public byte[] getStudentImage() {
+        return studentImage;
+    }
+
+    public void setStudentImage(byte[] studentImage) {
+        this.studentImage = studentImage;
+    }
+
+    private byte[] studentImage;
 }

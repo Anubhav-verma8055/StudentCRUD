@@ -255,7 +255,9 @@ public class ResultService {
         response.setStudentClass(student.getStudentClass());
         response.setTeacherName(teacher != null ? teacher.getName() : "Unknown");
         response.setTeacherSpeciality(teacher != null ? teacher.getSpeciality() : "N/A");
-        response.setSubjectsMarks(subjectsMarks); // Only the included subjects
+        response.setSubjectsMarks(subjectsMarks);
+        response.setStudentImage(student.getImage());
+        // Only the included subjects
 
         return response;
     }

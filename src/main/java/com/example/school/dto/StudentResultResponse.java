@@ -21,6 +21,16 @@ public class StudentResultResponse {
     private String grade;
     private String month;
 
+    public byte[] getStudentImage() {
+        return studentImage;
+    }
+
+    public void setStudentImage(byte[] studentImage) {
+        this.studentImage = studentImage;
+    }
+
+    private byte[] studentImage;
+
     public Map<String, Integer> getSubjectsMarks() {
         return subjectsMarks;
     }

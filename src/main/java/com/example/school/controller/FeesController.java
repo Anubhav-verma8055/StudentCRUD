@@ -47,8 +47,8 @@ public class FeesController {
         feesRepository.deleteById(id);
     }
 
-    @PostMapping("/student/monthFeesDetails")
-    public List<Map<String,Object>> getRequestedFeesDetails(@RequestBody List<Long> studentIds, @RequestBody List<String> months ) {
-        return paidResult.getRequestedFeesDetails(studentIds,months);
-    }
+//    @PostMapping("/student/monthFeesDetails")
+//    public List<Map<String,Object>> getRequestedFeesDetails(@RequestBody List<Long> studentIds, @RequestBody List<String> months ) {
+//        return paidResult.getRequestedFeesDetails(studentIds,months);
+//    }
 }

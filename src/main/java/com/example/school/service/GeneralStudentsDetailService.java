@@ -74,6 +74,7 @@ public class GeneralStudentsDetailService {
 
         detail.setMonth(fees.getMonth());
         detail.setSubmitted(fees.isSubmitted());
+        detail.setStudentImage(student.getImage());
         return detail;
     }
 }
