@@ -59,55 +59,54 @@ public class ResultService {
 
     public StudentResultResponse generateStudentResult(Long studentId) {
 
-
-
+        // Fetch student details
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
 
-       // Fees fees = feesRepository.findByStudentId(studentId).get(0);
-              // .orElseYhrow(() -> new RuntimeException("Student not found with ID: " + studentId));
-     List<Fees> feesList = feesRepository.findByStudentId(studentId);
-        if (feesList.isEmpty()) {
-            throw new RuntimeException("Marks not found for student ID: " + studentId);
-        }
-        Fees fees =feesList.get(0);
-
-
+        // Fetch marks
         Marks marks = marksRepository.findByStudentId(studentId).get(0);
 
-
+        // Fetch teacher details
         Teacher teacher = teacherRepository.findById(student.getTeacherId())
-                .orElseThrow(() -> new RuntimeException("Teacher not found for ID: " + student.getTeacherId()));
+                .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + student.getTeacherId()));
 
+        // Fetch fees details
+        List<Fees> feesList = feesRepository.findByStudentId(studentId);
+        if (feesList.isEmpty()) {
+            throw new RuntimeException("Fees not found for student ID: " + studentId);
+        }
+        Fees fees = feesList.get(0);
 
+        // Calculate total marks, percentage, and grade
         int totalMarks = marks.getHindi() + marks.getEnglish() + marks.getMaths() +
                 marks.getScience() + marks.getPolitics() + marks.getPhysicalEducation();
         int totalMaxMarks = 600; // Assume each subject is out of 100
         double percentage = (totalMarks / (double) totalMaxMarks) * 100;
-
-        // Determine grade
         String grade = calculateGrade(percentage);
 
-        // Create and return the response
-        StudentResultResponse response = new StudentResultResponse();
-        response.setStudentId(student.getId());
-        response.setStudentName(student.getName());
-        response.setStudentClass(student.getStudentClass());
-        response.setTeacherName(teacher.getName());
-        response.setTeacherSpeciality(teacher.getSpeciality());
-        response.setHindi(marks.getHindi());
-        response.setEnglish(marks.getEnglish());
-        response.setMaths(marks.getMaths());
-        response.setScience(marks.getScience());
-        response.setPolitics(marks.getPolitics());
-        response.setPhysicalEducation(marks.getPhysicalEducation());
-        response.setTotalMarks(totalMarks);
-        response.setTotalMaxMarks(totalMaxMarks);
-        response.setPercentage(percentage);
-        response.setGrade(grade);
-       response.setMonth(fees.getMonth());
+        // Create and populate StudentResult entity
+        StudentResult studentResult = new StudentResult();
+        studentResult.setStudentId(student.getId());
+        studentResult.setStudentName(student.getName());
+        studentResult.setStudentClass(student.getStudentClass());
+        studentResult.setHindi(marks.getHindi());
+        studentResult.setEnglish(marks.getEnglish());
+        studentResult.setMaths(marks.getMaths());
+        studentResult.setScience(marks.getScience());
+        studentResult.setPolitics(marks.getPolitics());
+        studentResult.setPhysicalEducation(marks.getPhysicalEducation());
+        studentResult.setTotalMarks(totalMarks);
+        studentResult.setTotalMaxMarks(totalMaxMarks);
+        studentResult.setPercentage(percentage);
+        studentResult.setGrade(grade);
+        studentResult.setMonth(fees.getMonth());
+        studentResult.setMonthFee(fees.getMonth());
 
-        return response;
+        // Save the entity before mapping
+        studentResult = studentResultRepository.save(studentResult);
+
+        // Map and return the response DTO
+        return mapToDTO(studentResult);
     }
 //Generate studentResult whose fees are apid for given month
     public StudentResultResponse generateStudentResultForMonth(Long studentId, String month) {
