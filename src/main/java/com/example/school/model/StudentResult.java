@@ -1,11 +1,19 @@
-package com.example.school.dto;
+package com.example.school.model;
 
-public class StudentResultResponse {
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "student_result")
+public class StudentResult {
+
+    @Id
+    private Long id;
+
     private Long studentId;
     private String studentName;
     private String studentClass;
-    private String teacherName;
-    private String teacherSpeciality;
     private Integer hindi;
     private Integer english;
     private Integer maths;
@@ -19,21 +27,20 @@ public class StudentResultResponse {
     private String month;
     private String monthFee;
 
-    public String getMonthFee() {
-        return monthFee;
+    public Integer getTotalMaxMarks() {
+        return totalMaxMarks;
     }
 
-    public void setMonthFee(String monthFee) {
-        this.monthFee = monthFee;
+    public void setTotalMaxMarks(Integer totalMaxMarks) {
+        this.totalMaxMarks = totalMaxMarks;
     }
 
-
-    public String getStudentClass() {
-        return studentClass;
+    public Long getId() {
+        return id;
     }
 
-    public void setStudentClass(String studentClass) {
-        this.studentClass = studentClass;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getStudentId() {
@@ -52,20 +59,12 @@ public class StudentResultResponse {
         this.studentName = studentName;
     }
 
-    public String getTeacherName() {
-        return teacherName;
+    public String getStudentClass() {
+        return studentClass;
     }
 
-    public void setTeacherName(String teacherName) {
-        this.teacherName = teacherName;
-    }
-
-    public String getTeacherSpeciality() {
-        return teacherSpeciality;
-    }
-
-    public void setTeacherSpeciality(String teacherSpeciality) {
-        this.teacherSpeciality = teacherSpeciality;
+    public void setStudentClass(String studentClass) {
+        this.studentClass = studentClass;
     }
 
     public Integer getHindi() {
@@ -124,14 +123,6 @@ public class StudentResultResponse {
         this.totalMarks = totalMarks;
     }
 
-    public Integer getTotalMaxMarks() {
-        return totalMaxMarks;
-    }
-
-    public void setTotalMaxMarks(Integer totalMaxMarks) {
-        this.totalMaxMarks = totalMaxMarks;
-    }
-
     public Double getPercentage() {
         return percentage;
     }
@@ -154,6 +145,14 @@ public class StudentResultResponse {
 
     public void setMonth(String month) {
         this.month = month;
+    }
+
+    public String getMonthFee() {
+        return monthFee;
+    }
+
+    public void setMonthFee(String monthFee) {
+        this.monthFee = monthFee;
     }
 
 

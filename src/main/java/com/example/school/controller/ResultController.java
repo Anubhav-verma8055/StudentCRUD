@@ -25,6 +25,13 @@ public class ResultController {
         return resultService.generateStudentResult(studentId);
     }
 
+    // Endpoint to get all student results
+    @GetMapping
+    public List<StudentResultResponse> getAllStudentResults() {
+        // Fetch the student results from the service and return them directly
+        return resultService.getStudentResults();
+    }
+
     @GetMapping("/paidstudent/{month}")
     public List<StudentResultResponse> getAllStudentResult(@PathVariable String month) {
         return paidService.generatePaidStudentResult(month); }
