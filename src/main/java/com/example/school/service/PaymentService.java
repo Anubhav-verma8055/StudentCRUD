@@ -1,3 +1,5 @@
+package com.example.school.service;
+
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.Payment;
