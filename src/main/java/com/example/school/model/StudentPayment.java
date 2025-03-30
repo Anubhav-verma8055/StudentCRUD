@@ -1,3 +1,4 @@
+package com.example.school.model;
 import jakarta.persistence.*;
 import lombok.*;
 
