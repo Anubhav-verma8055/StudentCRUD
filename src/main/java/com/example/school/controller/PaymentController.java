@@ -1,3 +1,5 @@
+package com.example.school.controller;
+
 import com.schoolmanagement.service.PaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
