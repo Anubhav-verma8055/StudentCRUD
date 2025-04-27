@@ -1,4 +1,4 @@
-package com.example.school.Config;
+package com.example.school.Config.jwt;
 
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;

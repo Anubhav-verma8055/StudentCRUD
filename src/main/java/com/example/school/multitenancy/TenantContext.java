@@ -1,6 +1,4 @@
-package com.example.school.Config;
-
-import com.example.school.model.Tenant;
+package com.example.school.multitenancy;
 
 public class TenantContext {
     private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();

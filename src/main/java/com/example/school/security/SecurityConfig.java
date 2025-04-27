@@ -1,4 +1,4 @@
-package com.example.school.Config;
+package com.example.school.security;
 
 import com.example.school.model.Tenant;
 import com.example.school.service.TenantService;
@@ -17,6 +17,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
+    private final JwtService jwtService;
+    private final TenantService tenantService;
+
+    public SecurityConfig(JwtService jwtService, TenantService tenantService) {
+        this.jwtService = jwtService;
+        this.tenantService = tenantService;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
@@ -24,13 +31,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(TenantService tenantService) {
+    public UserDetailsService userDetailsService() {
         return username -> {
             Tenant tenant = tenantService.getTenantByUsername(username);
             return User.builder()
                     .username(tenant.getUsername())
                     .password(tenant.getPassword())
-                    .roles(tenant.getRoles().toArray(new String[0])) // Assign roles dynamically
+                    .roles(tenant.getRoles().toArray(new String[0]))
                     .build();
         };
     }
@@ -45,10 +52,10 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/register").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthFilter(jwtService, tenantService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
