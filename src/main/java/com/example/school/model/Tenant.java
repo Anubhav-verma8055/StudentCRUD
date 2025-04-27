@@ -23,6 +23,10 @@ public class Tenant {
     @Column(nullable = false, unique = true)
     private String databaseName; // H2 file-based database
 
+  /*  public Tenant(String collegeName) {
+        this.collegeName = collegeName;
+    }
+*/
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "tenant_roles", joinColumns = @JoinColumn(name = "tenant_id"))
     @Column(name = "role")
@@ -32,6 +36,28 @@ public class Tenant {
     @CollectionTable(name = "tenant_services", joinColumns = @JoinColumn(name = "tenant_id"))
     @Column(name = "service")
     private Set<String> allowedServices; // Defines accessible services
+
+    private String collegeName;
+    public String getCollegeName() {
+        return collegeName;
+    }
+
+    public void setCollegeName(String collegeName) {
+        this.collegeName = collegeName;
+    }
+
+    public Tenant(Long id, String username, String password, String databaseName, Set<String> roles, Set<String> allowedServices, String collegeName) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.databaseName = databaseName;
+        this.roles = roles;
+        this.allowedServices = allowedServices;
+        this.collegeName = collegeName;
+    }
+
+    public Tenant() {
+    }
 
     public Long getId() {
         return id;

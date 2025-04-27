@@ -16,6 +16,9 @@ public class MultiTenantConfig  extends AbstractRoutingDataSource {
 
     @Autowired
     private TenantService tenantService;
+
+    @Autowired
+    private TenantRoutingDataSource tenantRoutingDataSource;
     @Bean
     public DataSource dataSource() {
         Map<Object, Object> tenantDataSources = new HashMap<>();
@@ -47,7 +50,7 @@ public class MultiTenantConfig  extends AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
-        return TenantContext.getTenantId();
+        return tenantRoutingDataSource.determineCurrentLookupKey();
     }
 }
 

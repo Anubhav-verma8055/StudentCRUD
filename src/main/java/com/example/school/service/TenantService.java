@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TenantService {
@@ -15,10 +16,14 @@ public class TenantService {
     @Autowired
     private TenantRepository tenantRepository;
 
-    public Tenant registerTenant(String collegeName) {
+    public Tenant registerTenant(Tenant tenantRequest) {
         Tenant tenant = new Tenant();
-        tenant.setUsername(collegeName);
-        tenant.setDatabaseName("tenant_db_" + collegeName);
+        tenant.setUsername(tenantRequest.getUsername());
+        tenant.setPassword(tenantRequest.getPassword());
+        tenant.setAllowedServices(tenantRequest.getAllowedServices());
+        tenant.setRoles(tenantRequest.getRoles());
+        tenant.setCollegeName(tenantRequest.getCollegeName());
+        tenant.setDatabaseName("tenant_db_" + tenant.getCollegeName());
         return tenantRepository.save(tenant);
     }
 
@@ -30,5 +35,25 @@ public class TenantService {
     public List<Tenant> getAllTenants() {
         return tenantRepository.findAll();
     }
+
+    public Tenant getTenantById(Long id) {
+        Optional<Tenant> tenant = tenantRepository.findById(id);
+        return tenant.orElseThrow(() -> new RuntimeException("Tenant not found with id: " + id));
+    }
+
+    public Tenant updateTenant(Long id, String userName) {
+        //add other esential to keep the properties assocaited with tenant object
+        Tenant tenant = getTenantById(id);
+        tenant.setUsername(userName);
+        tenant.setDatabaseName("tenant_db_" + userName);
+        return tenantRepository.save(tenant);
+    }
+
+    public void deleteTenant(Long id) {
+        Tenant tenant = getTenantById(id);
+        tenantRepository.delete(tenant);
+    }
+
+
 
 }
